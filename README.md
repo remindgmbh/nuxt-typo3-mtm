@@ -159,14 +159,14 @@ export default defineNuxtConfig({
 </details>
 
 <!-- Badges -->
-[npm-version-src]: https://img.shields.io/npm/v/@remindgmbh/@remindgmbh/nuxt-typo3-mtm/latest.svg?style=flat&colorA=020420&colorB=00DC82
-[npm-version-href]: https://npmjs.com/package/@remindgmbh/@remindgmbh/nuxt-typo3-mtm
+[npm-version-src]: https://img.shields.io/npm/v/@remindgmbh/nuxt-typo3-mtm/latest.svg?style=flat&colorA=020420&colorB=00DC82
+[npm-version-href]: https://npmjs.com/package/@remindgmbh/nuxt-typo3-mtm
 
-[npm-downloads-src]: https://img.shields.io/npm/dm/@remindgmbh/@remindgmbh/nuxt-typo3-mtm.svg?style=flat&colorA=020420&colorB=00DC82
-[npm-downloads-href]: https://npm.chart.dev/@remindgmbh/@remindgmbh/nuxt-typo3-mtm
+[npm-downloads-src]: https://img.shields.io/npm/dm/@remindgmbh/nuxt-typo3-mtm.svg?style=flat&colorA=020420&colorB=00DC82
+[npm-downloads-href]: https://npm.chart.dev/@remindgmbh/nuxt-typo3-mtm
 
-[license-src]: https://img.shields.io/npm/l/@remindgmbh/@remindgmbh/nuxt-typo3-mtm.svg?style=flat&colorA=020420&colorB=00DC82
-[license-href]: https://npmjs.com/package/@remindgmbh/@remindgmbh/nuxt-typo3-mtm
+[license-src]: https://img.shields.io/npm/l/@remindgmbh/nuxt-typo3-mtm.svg?style=flat&colorA=020420&colorB=00DC82
+[license-href]: https://npmjs.com/package/@remindgmbh/nuxt-typo3-mtm
 
 [nuxt-src]: https://img.shields.io/badge/Nuxt-020420?logo=nuxt
 [nuxt-href]: https://nuxt.com
