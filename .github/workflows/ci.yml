@@ -17,4 +17,7 @@ jobs:
           node-version: 20
       - run: |
           npm ci
+          npx nuxt-module-build build --stub
+          npx nuxt-module-build prepare
+          npx nuxt prepare playground
           npm run static-analysis

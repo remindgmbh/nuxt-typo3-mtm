@@ -9,6 +9,20 @@ jobs:
   prerelease:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: |
+          npm ci
+          npx nuxt-module-build prepare
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: |
+          npm ci
+          npx nuxt-module-build prepare
       - uses: remindgmbh/npm-publish-prerelease-action@v1.1.0
         with:
           node-version: 20

@@ -31,6 +31,8 @@
     "dev:build": "nuxt build playground",
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxt prepare playground",
     "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
+    "static-analysis": "npm run lint && npm run test:types",
+    "static-analysis": "npm run lint && npm run test:types",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest watch",
