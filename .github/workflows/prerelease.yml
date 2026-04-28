@@ -1,0 +1,15 @@
+name: Prerelease
+
+on:
+  push:
+    branches:
+      - "develop"
+
+jobs:
+  prerelease:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: remindgmbh/npm-publish-prerelease-action@v1.1.0
+        with:
+          node-version: 20
+          npm-token: ${{ secrets.NPM_TOKEN }}
