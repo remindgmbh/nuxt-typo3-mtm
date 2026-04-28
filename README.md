@@ -23,20 +23,20 @@ Nuxt module for integrating [Matomo Tag Manager](https://matomo.org/guide/tag-ma
 Install the module to your Nuxt application with one command:
 
 ```bash
-npx nuxt module add nuxt-typo3-mtm
+npx nuxt module add @remindgmbh/@remindgmbh/nuxt-typo3-mtm
 ```
 
 Or install manually:
 
 ```bash
-npm install nuxt-typo3-mtm
+npm install @remindgmbh/@remindgmbh/nuxt-typo3-mtm
 ```
 
 Add the module to your `nuxt.config.ts`:
 
 ```ts
 export default defineNuxtConfig({
-  modules: ['nuxt-typo3-mtm'],
+  modules: ['@remindgmbh/@remindgmbh/nuxt-typo3-mtm'],
   mtm: {
     matomoUrl: 'https://analytics.example.com',
     containerId: 'aBcDeFg1',
@@ -63,7 +63,7 @@ You can also configure the module via `runtimeConfig` in your `nuxt.config.ts`:
 
 ```ts
 export default defineNuxtConfig({
-  modules: ['nuxt-typo3-mtm'],
+  modules: ['@remindgmbh/@remindgmbh/nuxt-typo3-mtm'],
   mtm: {
     matomoUrl: process.env.NUXT_PUBLIC_MTM_MATOMO_URL,
     containerId: process.env.NUXT_PUBLIC_MTM_CONTAINER_ID,
@@ -118,7 +118,7 @@ If you want to manage the MTM container script yourself (e.g. via consent manage
 
 ```ts
 export default defineNuxtConfig({
-  modules: ['nuxt-typo3-mtm'],
+  modules: ['@remindgmbh/@remindgmbh/nuxt-typo3-mtm'],
   mtm: {
     matomoUrl: 'https://analytics.example.com',
     containerId: 'aBcDeFg1',
@@ -159,14 +159,14 @@ export default defineNuxtConfig({
 </details>
 
 <!-- Badges -->
-[npm-version-src]: https://img.shields.io/npm/v/nuxt-typo3-mtm/latest.svg?style=flat&colorA=020420&colorB=00DC82
-[npm-version-href]: https://npmjs.com/package/nuxt-typo3-mtm
+[npm-version-src]: https://img.shields.io/npm/v/@remindgmbh/@remindgmbh/nuxt-typo3-mtm/latest.svg?style=flat&colorA=020420&colorB=00DC82
+[npm-version-href]: https://npmjs.com/package/@remindgmbh/@remindgmbh/nuxt-typo3-mtm
 
-[npm-downloads-src]: https://img.shields.io/npm/dm/nuxt-typo3-mtm.svg?style=flat&colorA=020420&colorB=00DC82
-[npm-downloads-href]: https://npm.chart.dev/nuxt-typo3-mtm
+[npm-downloads-src]: https://img.shields.io/npm/dm/@remindgmbh/@remindgmbh/nuxt-typo3-mtm.svg?style=flat&colorA=020420&colorB=00DC82
+[npm-downloads-href]: https://npm.chart.dev/@remindgmbh/@remindgmbh/nuxt-typo3-mtm
 
-[license-src]: https://img.shields.io/npm/l/nuxt-typo3-mtm.svg?style=flat&colorA=020420&colorB=00DC82
-[license-href]: https://npmjs.com/package/nuxt-typo3-mtm
+[license-src]: https://img.shields.io/npm/l/@remindgmbh/@remindgmbh/nuxt-typo3-mtm.svg?style=flat&colorA=020420&colorB=00DC82
+[license-href]: https://npmjs.com/package/@remindgmbh/@remindgmbh/nuxt-typo3-mtm
 
 [nuxt-src]: https://img.shields.io/badge/Nuxt-020420?logo=nuxt
 [nuxt-href]: https://nuxt.com

@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-typo3-mtm",
+  "name": "@remindgmbh/nuxt-typo3-mtm",
   "version": "1.0.0",
   "description": "Nuxt module for Matomo Tag Manager integration",
   "repository": "your-org/nuxt-typo3-mtm",

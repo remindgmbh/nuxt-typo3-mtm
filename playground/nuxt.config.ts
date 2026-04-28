@@ -1,5 +1,5 @@
 export default defineNuxtConfig({
-  modules: ['nuxt-typo3-mtm'],
+  modules: ['@remindgmbh/nuxt-typo3-mtm'],
   devtools: { enabled: true },
   compatibilityDate: 'latest',
   mtm: {
