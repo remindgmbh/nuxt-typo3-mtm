@@ -2,7 +2,10 @@
   "name": "@remindgmbh/nuxt-typo3-mtm",
   "version": "1.0.0",
   "description": "Nuxt module for Matomo Tag Manager integration",
-  "repository": "your-org/nuxt-typo3-mtm",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/remindgmbh/nuxt-typo3-mtm.git"
+  },
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -31,7 +34,6 @@
     "dev:build": "nuxt build playground",
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxt prepare playground",
     "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
-    "static-analysis": "npm run lint && npm run test:types",
     "static-analysis": "npm run lint && npm run test:types",
     "lint": "eslint .",
     "test": "vitest run",
