@@ -23,20 +23,20 @@ Nuxt module for integrating [Matomo Tag Manager](https://matomo.org/guide/tag-ma
 Install the module to your Nuxt application with one command:
 
 ```bash
-npx nuxt module add @remindgmbh/@remindgmbh/nuxt-typo3-mtm
+npx nuxt module add @remindgmbh/nuxt-typo3-mtm
 ```
 
 Or install manually:
 
 ```bash
-npm install @remindgmbh/@remindgmbh/nuxt-typo3-mtm
+npm install @remindgmbh/nuxt-typo3-mtm
 ```
 
 Add the module to your `nuxt.config.ts`:
 
 ```ts
 export default defineNuxtConfig({
-  modules: ['@remindgmbh/@remindgmbh/nuxt-typo3-mtm'],
+  modules: ['@remindgmbh/nuxt-typo3-mtm'],
   mtm: {
     matomoUrl: 'https://analytics.example.com',
     containerId: 'aBcDeFg1',
@@ -63,7 +63,7 @@ You can also configure the module via `runtimeConfig` in your `nuxt.config.ts`:
 
 ```ts
 export default defineNuxtConfig({
-  modules: ['@remindgmbh/@remindgmbh/nuxt-typo3-mtm'],
+  modules: ['@remindgmbh/nuxt-typo3-mtm'],
   mtm: {
     matomoUrl: process.env.NUXT_PUBLIC_MTM_MATOMO_URL,
     containerId: process.env.NUXT_PUBLIC_MTM_CONTAINER_ID,
@@ -118,7 +118,7 @@ If you want to manage the MTM container script yourself (e.g. via consent manage
 
 ```ts
 export default defineNuxtConfig({
-  modules: ['@remindgmbh/@remindgmbh/nuxt-typo3-mtm'],
+  modules: ['@remindgmbh/nuxt-typo3-mtm'],
   mtm: {
     matomoUrl: 'https://analytics.example.com',
     containerId: 'aBcDeFg1',
