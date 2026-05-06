@@ -1,9 +1,38 @@
-import { defineNuxtPlugin, nextTick, ref, useHead, useNuxtApp, useRuntimeConfig } from '#imports'
+import { defineNuxtPlugin, ref, useHead, useNuxtApp, useRuntimeConfig } from '#imports'
 import type { MtmInstance, MtmPublicRuntimeConfig } from './types'
 
 const noopMtm: MtmInstance = {
   push: () => {},
   trackPageView: () => {},
+}
+
+// page:finish fires inside onMounted; unhead's watchEffect (a post-flush
+// effect) runs after onMounted and is what actually writes document.title.
+// The MutationObserver fires the instant that write happens. The setTimeout(0)
+// fallback handles the case where the title is identical between routes
+// (no mutation occurs) — it fires after all pending microtasks, by which
+// point document.title is already the correct value.
+function resolveTitle(): Promise<string> {
+  return new Promise((resolve) => {
+    const titleEl = document.querySelector('title')
+    if (!titleEl) {
+      resolve(document.title)
+      return
+    }
+
+    const observer = new MutationObserver(() => {
+      observer.disconnect()
+      clearTimeout(fallback)
+      resolve(document.title)
+    })
+
+    observer.observe(titleEl, { childList: true, characterData: true, subtree: true })
+
+    const fallback = setTimeout(() => {
+      observer.disconnect()
+      resolve(document.title)
+    }, 0)
+  })
 }
 
 export default defineNuxtPlugin({
@@ -53,18 +82,18 @@ export default defineNuxtPlugin({
         window._mtm = window._mtm || []
         window._mtm.push(data)
       },
-      trackPageView: () => {
+      trackPageView: (title?: string) => {
         window._mtm = window._mtm || []
         const url = window.location.href
-        const title = document.title
+        const resolvedTitle = title ?? document.title
         // setCustomUrl must be called before the MTM tag fires trackPageView,
         // otherwise Matomo Analytics reuses its internally cached initial URL
         // for every subsequent SPA navigation.
         if (window._paq) {
           window._paq.push(['setCustomUrl', url])
-          window._paq.push(['setDocumentTitle', title])
+          window._paq.push(['setDocumentTitle', resolvedTitle])
         }
-        window._mtm.push({ 'event': 'mtm.PageView', 'mtm.newUrl': url, 'mtm.newTitle': title })
+        window._mtm.push({ 'event': 'mtm.PageView', 'mtm.newUrl': url, 'mtm.newTitle': resolvedTitle })
       },
     }
 
@@ -95,19 +124,18 @@ export default defineNuxtPlugin({
       })
     }
 
-    // Automatic SPA page view tracking.
-    // page:finish fires after the full page lifecycle (mount + unhead flush),
-    // ensuring document.title reflects the new route before we read it.
+    // Automatic SPA page view tracking
     if (config.trackPageView) {
       const nuxtApp = useNuxtApp()
       let isFirstPage = true
 
-      nuxtApp.hook('page:finish', () => {
+      nuxtApp.hook('page:finish', async () => {
         if (isFirstPage) {
           isFirstPage = false
           return
         }
-        nextTick(() => mtm.trackPageView())
+        const title = await resolveTitle()
+        mtm.trackPageView(title)
       })
     }
 

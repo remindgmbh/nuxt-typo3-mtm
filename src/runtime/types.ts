@@ -11,7 +11,7 @@ export interface MtmPublicRuntimeConfig {
 
 export interface MtmInstance {
   push: (data: Record<string, unknown> | unknown[]) => void
-  trackPageView: () => void
+  trackPageView: (title?: string) => void
 }
 
 declare global {
