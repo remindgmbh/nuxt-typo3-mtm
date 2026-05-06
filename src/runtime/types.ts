@@ -5,6 +5,8 @@ export interface MtmPublicRuntimeConfig {
   debug: boolean
   loadScript: boolean
   trackPageView: boolean
+  /** Cookiebot consent category required before loading the MTM container (e.g. 'statistics') */
+  cookie?: string
 }
 
 export interface MtmInstance {
@@ -16,6 +18,9 @@ declare global {
   interface Window {
     _mtm: Array<Record<string, unknown> | unknown[]>
     _paq?: Array<unknown[]>
+    Cookiebot?: {
+      consent: Record<string, boolean>
+    }
   }
 }
 

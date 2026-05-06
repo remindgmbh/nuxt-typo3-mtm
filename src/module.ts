@@ -14,6 +14,8 @@ export interface ModuleOptions {
   loadScript: boolean
   /** Automatically track page views on SPA route changes */
   trackPageView: boolean
+  /** Cookiebot consent category required before loading the MTM container (e.g. 'statistics') */
+  cookie?: string
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -31,6 +33,7 @@ export default defineNuxtModule<ModuleOptions>({
     debug: false,
     loadScript: true,
     trackPageView: true,
+    cookie: undefined,
   },
   setup(options, nuxt) {
     const logger = useLogger('nuxt-typo3-mtm')
@@ -57,6 +60,7 @@ export default defineNuxtModule<ModuleOptions>({
       debug: options.debug,
       loadScript: options.loadScript,
       trackPageView: options.trackPageView,
+      cookie: options.cookie,
     }
 
     nuxt.options.runtimeConfig.public.mtm = mtmConfig

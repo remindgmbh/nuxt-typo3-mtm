@@ -18,14 +18,15 @@ export default defineNuxtPlugin({
       initScript += `window._mtm.push(['enableDebugMode']);`
     }
 
-    // Using useHead as it does not wait for Nuxt hydration to complete (which is what manipulating the DOM would do)
+    // Container script is omitted from SSR when cookie consent is required;
+    // it will be injected client-side once consent is granted.
     useHead({
       script: [
         {
           key: 'mtm-init',
           innerHTML: initScript,
         },
-        ...(config.loadScript
+        ...(config.loadScript && !config.cookie
           ? [{
               key: 'mtm-container',
               src: `${config.matomoUrl}/js/container_${config.containerId}.js`,
@@ -65,6 +66,31 @@ export default defineNuxtPlugin({
         }
         window._mtm.push({ 'event': 'mtm.PageView', 'mtm.newUrl': url, 'mtm.newTitle': title })
       },
+    }
+
+    // Consent-gated container script loading
+    if (config.loadScript && config.cookie) {
+      const containerScript = {
+        key: 'mtm-container',
+        src: `${config.matomoUrl}/js/container_${config.containerId}.js`,
+        async: true,
+      }
+
+      const isCookieAccepted = () =>
+        config.cookie === 'none' || !!window.Cookiebot?.consent[config.cookie as string]
+
+      const loadContainerScript = () => useHead({ script: [containerScript] })
+
+      if (isCookieAccepted()) {
+        loadContainerScript()
+      }
+      else {
+        window.addEventListener('CookiebotOnAccept', () => {
+          if (isCookieAccepted()) {
+            loadContainerScript()
+          }
+        })
+      }
     }
 
     // Automatic SPA page view tracking
