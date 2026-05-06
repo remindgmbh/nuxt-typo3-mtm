@@ -1,4 +1,4 @@
-import { defineNuxtPlugin, useHead, useRuntimeConfig, useRouter } from '#imports'
+import { defineNuxtPlugin, nextTick, useHead, useRuntimeConfig, useRouter } from '#imports'
 import type { MtmInstance, MtmPublicRuntimeConfig } from './types'
 
 const noopMtm: MtmInstance = {
@@ -18,9 +18,7 @@ export default defineNuxtPlugin({
       initScript += `window._mtm.push(['enableDebugMode']);`
     }
 
-    // Inject scripts via useHead — they render in SSR HTML so the browser
-    // starts downloading the container script immediately, without waiting
-    // for Nuxt hydration (unlike DOM manipulation).
+    // Using useHead as it does not wait for Nuxt hydration to complete (which is what manipulating the DOM would do)
     useHead({
       script: [
         {
@@ -56,7 +54,16 @@ export default defineNuxtPlugin({
       },
       trackPageView: () => {
         window._mtm = window._mtm || []
-        window._mtm.push({ event: 'mtm.PageView' })
+        const url = window.location.href
+        const title = document.title
+        // setCustomUrl must be called before the MTM tag fires trackPageView,
+        // otherwise Matomo Analytics reuses its internally cached initial URL
+        // for every subsequent SPA navigation.
+        if (window._paq) {
+          window._paq.push(['setCustomUrl', url])
+          window._paq.push(['setDocumentTitle', title])
+        }
+        window._mtm.push({ 'event': 'mtm.PageView', 'mtm.newUrl': url, 'mtm.newTitle': title })
       },
     }
 
@@ -64,15 +71,11 @@ export default defineNuxtPlugin({
     if (config.trackPageView) {
       const router = useRouter()
 
-      // Skip the first navigation (initial page load) since the MTM
-      // container handles it. Only track subsequent SPA navigations.
-      let isFirstRoute = true
-      router.afterEach(() => {
-        if (isFirstRoute) {
-          isFirstRoute = false
-          return
-        }
-        mtm.trackPageView()
+      // from.matched is empty only on the very first navigation (Vue Router's
+      // START_LOCATION) to avoid double tracking.
+      router.afterEach((_to, from) => {
+        if (from.matched.length === 0) return
+        nextTick(() => mtm.trackPageView())
       })
     }
 

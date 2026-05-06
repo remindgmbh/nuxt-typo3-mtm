@@ -15,6 +15,7 @@ export interface MtmInstance {
 declare global {
   interface Window {
     _mtm: Array<Record<string, unknown> | unknown[]>
+    _paq?: Array<unknown[]>
   }
 }
 
