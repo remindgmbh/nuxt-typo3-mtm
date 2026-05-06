@@ -1,4 +1,4 @@
-import { defineNuxtPlugin, nextTick, useHead, useRuntimeConfig, useRouter } from '#imports'
+import { defineNuxtPlugin, nextTick, ref, useHead, useNuxtApp, useRuntimeConfig } from '#imports'
 import type { MtmInstance, MtmPublicRuntimeConfig } from './types'
 
 const noopMtm: MtmInstance = {
@@ -19,7 +19,7 @@ export default defineNuxtPlugin({
     }
 
     // Container script is omitted from SSR when cookie consent is required;
-    // it will be injected client-side once consent is granted.
+    // it will be injected client-side reactively once consent is granted.
     useHead({
       script: [
         {
@@ -70,37 +70,43 @@ export default defineNuxtPlugin({
 
     // Consent-gated container script loading
     if (config.loadScript && config.cookie) {
-      const containerScript = {
-        key: 'mtm-container',
-        src: `${config.matomoUrl}/js/container_${config.containerId}.js`,
-        async: true,
-      }
-
       const isCookieAccepted = () =>
         config.cookie === 'none' || !!window.Cookiebot?.consent[config.cookie as string]
 
-      const loadContainerScript = () => useHead({ script: [containerScript] })
+      const consentGranted = ref(isCookieAccepted())
 
-      if (isCookieAccepted()) {
-        loadContainerScript()
-      }
-      else {
-        window.addEventListener('CookiebotOnAccept', () => {
-          if (isCookieAccepted()) {
-            loadContainerScript()
-          }
-        })
-      }
+      // Reactive useHead: unhead watches consentGranted and adds/removes the
+      // script tag automatically whenever consent changes without a page reload.
+      useHead(() => ({
+        script: consentGranted.value
+          ? [{
+              key: 'mtm-container',
+              src: `${config.matomoUrl}/js/container_${config.containerId}.js`,
+              async: true,
+            }]
+          : [],
+      }))
+
+      window.addEventListener('CookiebotOnAccept', () => {
+        consentGranted.value = isCookieAccepted()
+      })
+      window.addEventListener('CookiebotOnDecline', () => {
+        consentGranted.value = isCookieAccepted()
+      })
     }
 
-    // Automatic SPA page view tracking
+    // Automatic SPA page view tracking.
+    // page:finish fires after the full page lifecycle (mount + unhead flush),
+    // ensuring document.title reflects the new route before we read it.
     if (config.trackPageView) {
-      const router = useRouter()
+      const nuxtApp = useNuxtApp()
+      let isFirstPage = true
 
-      // from.matched is empty only on the very first navigation (Vue Router's
-      // START_LOCATION) to avoid double tracking.
-      router.afterEach((_to, from) => {
-        if (from.matched.length === 0) return
+      nuxtApp.hook('page:finish', () => {
+        if (isFirstPage) {
+          isFirstPage = false
+          return
+        }
         nextTick(() => mtm.trackPageView())
       })
     }
