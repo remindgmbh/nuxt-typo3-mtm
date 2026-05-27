@@ -5,13 +5,15 @@
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 
-Nuxt module for integrating [Matomo Tag Manager](https://matomo.org/guide/tag-manager/) into your Nuxt 3+ application.
+Nuxt module for integrating [Matomo Tag Manager](https://matomo.org/guide/tag-manager/) into Nuxt 3/4 applications.
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
 
 ## Features
 
-- Injects the Matomo Tag Manager container script with SSR support
+- Injects the MTM bootstrap snippet in SSR HTML
+- Injects the container script automatically (or lets you disable it)
+- Optional consent-gated script loading via Cookiebot
 - Initializes the `window._mtm` data layer automatically
 - Automatic SPA page view tracking on route changes
 - `useMtm()` composable and `$mtm` instance for manual event tracking
@@ -56,10 +58,13 @@ That's it! You can now use Matomo Tag Manager in your Nuxt app.
 | `debug` | `boolean` | `false` | Enable Matomo Tag Manager debug mode |
 | `loadScript` | `boolean` | `true` | Whether to inject the container script into the page |
 | `trackPageView` | `boolean` | `true` | Automatically track page views on SPA route changes |
+| `cookie` | `string \| undefined` | `undefined` | Cookiebot consent category required before loading the container (e.g. `statistics`). Use `none` to always load client-side. |
 
-### Environment Variables
+The module soft-disables itself when `matomoUrl` or `containerId` is missing and normalizes `matomoUrl` by removing trailing slashes.
 
-You can also configure the module via `runtimeConfig` in your `nuxt.config.ts`:
+### Environment-based Configuration
+
+You can configure the module with environment variables in `nuxt.config.ts`:
 
 ```ts
 export default defineNuxtConfig({
@@ -71,11 +76,30 @@ export default defineNuxtConfig({
 })
 ```
 
+The module writes these values to `runtimeConfig.public.mtm` for runtime usage.
+
 ## Usage
 
 ### Automatic Tracking
 
 With `trackPageView: true` (default), page views are automatically tracked on every SPA route change. The initial page load is handled by the MTM container itself.
+
+### Cookie Consent (Cookiebot)
+
+If you use Cookiebot, set the required consent category with `cookie`:
+
+```ts
+export default defineNuxtConfig({
+  modules: ['@remindgmbh/nuxt-typo3-mtm'],
+  mtm: {
+    matomoUrl: 'https://analytics.example.com',
+    containerId: 'aBcDeFg1',
+    cookie: 'statistics',
+  },
+})
+```
+
+When `cookie` is set, the container script is not rendered in SSR HTML and is injected client-side once consent is granted (`CookiebotOnAccept` / `CookiebotOnDecline`).
 
 ### Manual Tracking
 
@@ -114,7 +138,7 @@ export default defineComponent({
 
 ### Disabling Script Injection
 
-If you want to manage the MTM container script yourself (e.g. via consent management), set `loadScript: false` and manually push events:
+If you want to manage the MTM container script yourself, set `loadScript: false` and manually push events:
 
 ```ts
 export default defineNuxtConfig({
@@ -133,8 +157,8 @@ export default defineNuxtConfig({
   <summary>Local development</summary>
 
   ```bash
-  # Install dependencies
-  npm install
+  # Install dependencies (Node 20)
+  npm ci
 
   # Generate type stubs
   npm run dev:prepare
@@ -147,6 +171,9 @@ export default defineNuxtConfig({
 
   # Run ESLint
   npm run lint
+
+  # Run static analysis (lint + type checks)
+  npm run static-analysis
 
   # Run Vitest
   npm run test
