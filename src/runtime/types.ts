@@ -30,12 +30,6 @@ declare module '#app' {
   }
 }
 
-declare module '@vue/runtime-core' {
-  interface ComponentCustomProperties {
-    $mtm: MtmInstance
-  }
-}
-
 declare module 'nuxt/schema' {
   interface PublicRuntimeConfig {
     mtm: MtmPublicRuntimeConfig
