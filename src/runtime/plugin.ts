@@ -100,7 +100,7 @@ export default defineNuxtPlugin({
     // Consent-gated container script loading
     if (config.loadScript && config.cookie) {
       const isCookieAccepted = () =>
-        config.cookie === 'none' || !!window.Cookiebot?.consent[config.cookie as string]
+        config.cookie === 'none' || !!window.Cookiebot?.consent?.[config.cookie as string]
 
       const consentGranted = ref(isCookieAccepted())
 
