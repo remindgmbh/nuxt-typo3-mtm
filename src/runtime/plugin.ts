@@ -1,8 +1,10 @@
 import {
     defineNuxtPlugin,
+    nextTick,
     ref,
     useHead,
     useNuxtApp,
+    useRouter,
     useRuntimeConfig
 } from '#imports'
 
@@ -44,7 +46,7 @@ function resolveTitle(): Promise<string> {
 
 export default defineNuxtPlugin({
   name: 'nuxt-typo3-mtm',
-  setup(nuxtApp) {
+  setup() {
     const config = useRuntimeConfig().public.mtm as MtmPublicRuntimeConfig
 
     // Build the inline data layer initialization script
@@ -99,6 +101,7 @@ export default defineNuxtPlugin({
         if (window._paq) {
           window._paq.push(['setCustomUrl', url])
           window._paq.push(['setDocumentTitle', resolvedTitle])
+          window._paq.push(['trackPageView', resolvedTitle])
         }
         window._mtm.push({ 'event': 'mtm.PageView', 'mtm.newUrl': url, 'mtm.newTitle': resolvedTitle })
       },
@@ -131,21 +134,6 @@ export default defineNuxtPlugin({
       })
     }
 
-    // Automatic SPA page view tracking
-    if (config.trackPageView) {
-      const nuxtApp = useNuxtApp()
-      let isFirstPage = true
-
-      nuxtApp.hook('page:finish', async () => {
-        if (isFirstPage) {
-          isFirstPage = false
-          return
-        }
-        const title = await resolveTitle()
-        mtm.trackPageView(title)
-      })
-    }
-
     const router = useRouter()
 
     router.afterEach(async (to, from, failure) => {
@@ -154,7 +142,7 @@ export default defineNuxtPlugin({
         }
 
         await nextTick()
-        nuxtApp.$mtm.trackPageView(title)
+        mtm.trackPageView()
     })
 
     return {
