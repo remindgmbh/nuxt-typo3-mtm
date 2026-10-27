@@ -1,11 +1,10 @@
 import {
-    defineNuxtPlugin,
-    nextTick,
-    ref,
-    useHead,
-    useNuxtApp,
-    useRouter,
-    useRuntimeConfig
+  defineNuxtPlugin,
+  nextTick,
+  ref,
+  useHead,
+  useRouter,
+  useRuntimeConfig,
 } from '#imports'
 
 import type { MtmInstance, MtmPublicRuntimeConfig } from './types'
@@ -13,35 +12,6 @@ import type { MtmInstance, MtmPublicRuntimeConfig } from './types'
 const noopMtm: MtmInstance = {
   push: () => {},
   trackPageView: () => {},
-}
-
-// page:finish fires inside onMounted; unhead's watchEffect (a post-flush
-// effect) runs after onMounted and is what actually writes document.title.
-// The MutationObserver fires the instant that write happens. The setTimeout(0)
-// fallback handles the case where the title is identical between routes
-// (no mutation occurs) — it fires after all pending microtasks, by which
-// point document.title is already the correct value.
-function resolveTitle(): Promise<string> {
-  return new Promise((resolve) => {
-    const titleEl = document.querySelector('title')
-    if (!titleEl) {
-      resolve(document.title)
-      return
-    }
-
-    const observer = new MutationObserver(() => {
-      observer.disconnect()
-      clearTimeout(fallback)
-      resolve(document.title)
-    })
-
-    observer.observe(titleEl, { childList: true, characterData: true, subtree: true })
-
-    const fallback = setTimeout(() => {
-      observer.disconnect()
-      resolve(document.title)
-    }, 0)
-  })
 }
 
 export default defineNuxtPlugin({
@@ -61,15 +31,17 @@ export default defineNuxtPlugin({
     useHead({
       script: [
         {
-          key: 'mtm-init',
           innerHTML: initScript,
+          key: 'mtm-init',
         },
         ...(config.loadScript && !config.cookie
-          ? [{
-              key: 'mtm-container',
-              src: `${config.matomoUrl}/js/container_${config.containerId}.js`,
-              async: true,
-            }]
+          ? [
+              {
+                async: true,
+                key: 'mtm-container',
+                src: `${config.matomoUrl}/js/container_${config.containerId}.js`,
+              },
+            ]
           : []),
       ],
     })
@@ -103,7 +75,11 @@ export default defineNuxtPlugin({
           window._paq.push(['setDocumentTitle', resolvedTitle])
           window._paq.push(['trackPageView', resolvedTitle])
         }
-        window._mtm.push({ 'event': 'mtm.PageView', 'mtm.newUrl': url, 'mtm.newTitle': resolvedTitle })
+        window._mtm.push({
+          'event': 'mtm.PageView',
+          'mtm.newTitle': resolvedTitle,
+          'mtm.newUrl': url,
+        })
       },
     }
 
@@ -118,11 +94,13 @@ export default defineNuxtPlugin({
       // script tag automatically whenever consent changes without a page reload.
       useHead(() => ({
         script: consentGranted.value
-          ? [{
-              key: 'mtm-container',
-              src: `${config.matomoUrl}/js/container_${config.containerId}.js`,
-              async: true,
-            }]
+          ? [
+              {
+                async: true,
+                key: 'mtm-container',
+                src: `${config.matomoUrl}/js/container_${config.containerId}.js`,
+              },
+            ]
           : [],
       }))
 
@@ -137,12 +115,12 @@ export default defineNuxtPlugin({
     const router = useRouter()
 
     router.afterEach(async (to, from, failure) => {
-        if (failure || to.fullPath === from.fullPath) {
-            return
-        }
+      if (failure || to.fullPath === from.fullPath) {
+        return
+      }
 
-        await nextTick()
-        mtm.trackPageView()
+      await nextTick()
+      mtm.trackPageView()
     })
 
     return {
