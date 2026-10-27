@@ -19,6 +19,15 @@ export interface ModuleOptions {
 }
 
 export default defineNuxtModule<ModuleOptions>({
+  defaults: {
+    containerId: '',
+    cookie: undefined,
+    debug: false,
+    enabled: true,
+    loadScript: true,
+    matomoUrl: '',
+    trackPageView: true,
+  },
   meta: {
     name: 'nuxt-typo3-mtm',
     configKey: 'mtm',
@@ -26,27 +35,18 @@ export default defineNuxtModule<ModuleOptions>({
       nuxt: '>=3.0.0',
     },
   },
-  defaults: {
-    matomoUrl: '',
-    containerId: '',
-    enabled: true,
-    debug: false,
-    loadScript: true,
-    trackPageView: true,
-    cookie: undefined,
-  },
   setup(options, nuxt) {
     const logger = useLogger('nuxt-typo3-mtm')
     const resolver = createResolver(import.meta.url)
 
     if (!options.enabled) {
-      logger.info('Matomo Tag Manager is disabled')
-      return
+       logger.info('Matomo Tag Manager is disabled')
+       return
     }
 
     if (!options.matomoUrl || !options.containerId) {
-      logger.warn('Matomo Tag Manager requires both `matomoUrl` and `containerId` to be set')
-      return
+       logger.warn('Matomo Tag Manager requires both `matomoUrl` and `containerId` to be set')
+       return
     }
 
     // Normalize URL — strip trailing slash
@@ -54,13 +54,13 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Pass options to runtime via public runtime config
     const mtmConfig: MtmPublicRuntimeConfig = {
-      matomoUrl: options.matomoUrl,
-      containerId: options.containerId,
-      enabled: options.enabled,
-      debug: options.debug,
-      loadScript: options.loadScript,
-      trackPageView: options.trackPageView,
-      cookie: options.cookie,
+        matomoUrl: options.matomoUrl,
+        containerId: options.containerId,
+        enabled: options.enabled,
+        debug: options.debug,
+        loadScript: options.loadScript,
+        trackPageView: options.trackPageView,
+        cookie: options.cookie,
     }
 
     nuxt.options.runtimeConfig.public.mtm = mtmConfig

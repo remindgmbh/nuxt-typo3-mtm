@@ -1,4 +1,11 @@
-import { defineNuxtPlugin, ref, useHead, useNuxtApp, useRuntimeConfig } from '#imports'
+import {
+    defineNuxtPlugin,
+    ref,
+    useHead,
+    useNuxtApp,
+    useRuntimeConfig
+} from '#imports'
+
 import type { MtmInstance, MtmPublicRuntimeConfig } from './types'
 
 const noopMtm: MtmInstance = {
@@ -37,7 +44,7 @@ function resolveTitle(): Promise<string> {
 
 export default defineNuxtPlugin({
   name: 'nuxt-typo3-mtm',
-  setup() {
+  setup(nuxtApp) {
     const config = useRuntimeConfig().public.mtm as MtmPublicRuntimeConfig
 
     // Build the inline data layer initialization script
@@ -138,6 +145,17 @@ export default defineNuxtPlugin({
         mtm.trackPageView(title)
       })
     }
+
+    const router = useRouter()
+
+    router.afterEach(async (to, from, failure) => {
+        if (failure || to.fullPath === from.fullPath) {
+            return
+        }
+
+        await nextTick()
+        nuxtApp.$mtm.trackPageView(title)
+    })
 
     return {
       provide: {
